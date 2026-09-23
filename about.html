@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sceya — About</title>
+<style>
+  :root{
+    --fg:#fff;
+    --muted:#8a8a8a;
+    --line:rgba(255,255,255,.18);
+    --accent:#ff2b3d;
+    --mono:"SF Mono","JetBrains Mono","Courier New",monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{
+    height:100%;
+    overflow:hidden;
+  }
+  body{
+    color:var(--fg);
+    font-family:var(--mono);
+    letter-spacing:.02em;
+    background:#000;
+  }
+
+  .frame{
+    position:relative;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    background:#000;
+  }
+
+  .bg-flower{
+    position:absolute;
+    inset:0;
+    background:url('lower.png') center center/contain no-repeat;
+    z-index:0;
+    pointer-events:none;
+  }
+
+  .topbar{
+    position:absolute;top:0;left:0;right:0;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:16px 40px;
+    font-size:10px;letter-spacing:.25em;
+    color:var(--muted);text-transform:uppercase;
+    border-bottom:1px solid var(--line);
+    background:rgba(0,0,0,.45);
+    backdrop-filter:blur(10px);
+    z-index:20;
+  }
+  .topbar .mid{
+    border:1px solid var(--line);padding:4px 12px;color:var(--fg);
+    display:flex;align-items:center;gap:8px;
+    white-space:nowrap;
+  }
+  .topbar .mid::before{
+    content:"";width:6px;height:6px;border-radius:50%;
+    background:var(--accent);
+    animation:blink 1.8s ease-in-out infinite;
+  }
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  .menu{
+    display:flex;gap:24px;align-items:center;
+  }
+  .menu a{
+    color:var(--muted);
+    text-decoration:none;
+    font-size:10px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    position:relative;
+    transition:color .3s ease;
+    white-space:nowrap;
+  }
+  .menu a::after{
+    content:"";position:absolute;left:0;bottom:-4px;
+    height:1px;width:0;background:var(--accent);
+    transition:width .35s cubic-bezier(.65,0,.35,1);
+  }
+  .menu a:hover{color:var(--fg)}
+  .menu a:hover::after{width:100%}
+  .menu a.active{color:var(--accent)}
+  .menu a.active::after{width:100%}
+
+  .content{
+    position:relative;
+    z-index:5;
+    width:100%;
+    height:100%;
+    padding:90px 60px 70px;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .page-title{
+    text-align:center;
+    animation:fade .9s ease both;
+  }
+  .page-title h1{
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    font-size:clamp(28px,4vw,58px);
+    line-height:.95;font-weight:800;
+    letter-spacing:-.03em;text-transform:uppercase;
+    text-shadow:0 4px 30px rgba(0,0,0,.9);
+  }
+  .page-title h1 .thin{font-weight:200}
+  .page-title .tag{
+    display:inline-block;
+    border:1px solid var(--accent);
+    color:var(--accent);
+    font-size:10px;letter-spacing:.25em;
+    padding:5px 12px;text-transform:uppercase;
+    margin-bottom:20px;
+    background:rgba(0,0,0,.45);
+    backdrop-filter:blur(6px);
+  }
+  @keyframes fade{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+  .rows{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:18px;
+  }
+  .row{
+    position:relative;
+    display:flex;
+    align-items:center;
+  }
+  .row.left{justify-content:flex-start}
+  .row.right{justify-content:flex-end}
+
+  .pointer-line{
+    position:absolute;
+    top:50%;
+    height:1px;
+    background:linear-gradient(to right,rgba(255,255,255,.55),rgba(255,255,255,.05));
+    pointer-events:none;
+    z-index:1;
+  }
+  .row.left .pointer-line{
+    left:28%;
+    width:10%;
+    transform:rotate(-6deg);
+    transform-origin:left center;
+  }
+  .row.right .pointer-line{
+    right:28%;
+    width:10%;
+    background:linear-gradient(to left,rgba(255,255,255,.55),rgba(255,255,255,.05));
+    transform:rotate(6deg);
+    transform-origin:right center;
+  }
+  .pointer-dot{
+    position:absolute;
+    top:calc(50% - 3px);
+    width:5px;height:5px;border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 10px var(--accent);
+    animation:pulse 2.4s ease-in-out infinite;
+    z-index:2;
+  }
+  .row.left .pointer-dot{left:28%}
+  .row.right .pointer-dot{right:28%}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.6)}}
+
+  .card{
+    position:relative;
+    width:min(300px,30%);
+    border:1px solid var(--line);
+    background:rgba(10,10,12,.55);
+    backdrop-filter:blur(16px);
+    padding:16px 22px;
+    cursor:pointer;
+    z-index:3;
+    transition:border-color .4s ease, background .4s ease, transform .5s cubic-bezier(.22,1,.36,1), box-shadow .5s ease;
+    animation:reveal .9s ease both;
+  }
+  @keyframes reveal{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+  .card::before{
+    content:"";position:absolute;top:-1px;left:-1px;
+    width:12px;height:12px;background:var(--accent);
+    transition:width .4s ease, height .4s ease;
+  }
+  .card:hover{
+    border-color:var(--accent);
+    background:rgba(20,0,4,.75);
+    transform:translateY(-3px);
+    box-shadow:0 16px 40px rgba(0,0,0,.7), 0 0 30px rgba(255,43,61,.15);
+  }
+  .card:hover::before{width:18px;height:18px}
+  .card .num{
+    font-size:9px;letter-spacing:.28em;
+    color:var(--accent);display:block;margin-bottom:8px;
+  }
+  .card .label{
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    font-size:clamp(16px,1.8vw,22px);
+    font-weight:800;letter-spacing:-.01em;
+    text-transform:uppercase;line-height:1;
+    margin-bottom:6px;
+  }
+  .card .hint{
+    font-size:9px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--muted);
+    display:flex;align-items:center;gap:6px;
+  }
+  .card .hint::after{
+    content:"+";
+    color:var(--accent);
+    font-size:11px;
+    margin-left:auto;
+  }
+
+  .bottombar{
+    position:absolute;bottom:0;left:0;right:0;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 40px;
+    font-size:9px;letter-spacing:.25em;
+    color:var(--muted);text-transform:uppercase;
+    border-top:1px solid var(--line);
+    background:rgba(0,0,0,.55);
+    backdrop-filter:blur(10px);
+    z-index:5;
+  }
+  .bottombar a{color:var(--muted);text-decoration:none;transition:color .3s}
+  .bottombar a:hover{color:var(--accent)}
+
+  .overlay{
+    position:absolute;inset:0;
+    background:rgba(0,0,0,.82);
+    backdrop-filter:blur(14px);
+    z-index:60;
+    display:flex;align-items:center;justify-content:center;
+    padding:32px;
+    opacity:0;pointer-events:none;
+    transition:opacity .5s ease;
+  }
+  .overlay.open{opacity:1;pointer-events:auto}
+  .modal{
+    position:relative;
+    max-width:640px;width:100%;
+    border:1px solid var(--line);
+    background:rgba(12,0,3,.92);
+    padding:40px 44px;
+    transform:scale(.9) translateY(20px);
+    opacity:0;
+    transition:transform .6s cubic-bezier(.22,1,.36,1), opacity .5s ease;
+    box-shadow:0 30px 80px rgba(0,0,0,.85), 0 0 60px rgba(255,43,61,.15);
+  }
+  .overlay.open .modal{
+    transform:scale(1) translateY(0);
+    opacity:1;
+  }
+  .modal::before{
+    content:"";position:absolute;top:-1px;left:-1px;
+    width:16px;height:16px;background:var(--accent);
+  }
+  .modal .m-tag{
+    font-size:10px;letter-spacing:.3em;
+    color:var(--accent);text-transform:uppercase;
+    display:block;margin-bottom:16px;
+  }
+  .modal h2{
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    font-size:clamp(24px,3vw,36px);
+    font-weight:800;letter-spacing:-.02em;
+    text-transform:uppercase;line-height:1;
+    margin-bottom:22px;
+  }
+  .modal p{
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    font-size:clamp(14px,1.4vw,17px);
+    line-height:1.7;color:#d0d0d0;
+    font-weight:300;
+  }
+  .modal .close-hint{
+    margin-top:26px;
+    font-size:9px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--muted);
+    display:flex;align-items:center;gap:10px;
+  }
+  .modal .close-hint::before{
+    content:"";width:20px;height:1px;background:var(--accent);
+  }
+
+  @media(max-width:900px){
+    .content{padding:70px 24px 60px}
+    .card{width:48%}
+    .topbar{padding:12px 18px;font-size:8px}
+    .topbar .mid{display:none}
+    .menu{gap:12px}
+    .menu a{font-size:8px;letter-spacing:.15em}
+    .bottombar{padding:10px 18px;font-size:8px}
+  }
+  @media(max-width:600px){
+    .menu{display:none}
+    .card{width:60%}
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+
+  <div class="bg-flower"></div>
+
+  <div class="topbar">
+    <span>SCEYA — ABOUT</span>
+
+    <nav class="menu">
+      <a href="index.html">01 / REALITY</a>
+      <a href="page2.html">02 / PRICE</a>
+      <a href="page3.html">03 / WORKS</a>
+      <a href="page4.html">04 / PROCESS</a>
+      <a href="page5.html">05 / CONTACT</a>
+    </nav>
+
+    <span>LOCAL TIME 04:04 AM</span>
+  </div>
+
+  <div class="content">
+
+    <div class="page-title">
+      <span class="tag">PERSONAL / SCEYA</span>
+      <h1><span class="thin">ABOUT,</span><br>THE PERSON.</h1>
+    </div>
+
+    <div class="rows">
+
+      <div class="row left">
+        <div class="pointer-line"></div>
+        <div class="pointer-dot"></div>
+        <div class="card" data-key="history">
+          <span class="num">01 / HISTORY</span>
+          <div class="label">History</div>
+          <div class="hint">Open details</div>
+        </div>
+      </div>
+
+      <div class="row right">
+        <div class="pointer-line"></div>
+        <div class="pointer-dot"></div>
+        <div class="card" data-key="education">
+          <span class="num">02 / EDUCATION</span>
+          <div class="label">Education</div>
+          <div class="hint">Open details</div>
+        </div>
+      </div>
+
+      <div class="row left">
+        <div class="pointer-line"></div>
+        <div class="pointer-dot"></div>
+        <div class="card" data-key="work">
+          <span class="num">03 / WORK</span>
+          <div class="label">Work</div>
+          <div class="hint">Open details</div>
+        </div>
+      </div>
+
+      <div class="row right">
+        <div class="pointer-line"></div>
+        <div class="pointer-dot"></div>
+        <div class="card" data-key="future">
+          <span class="num">04 / FUTURE</span>
+          <div class="label">Future</div>
+          <div class="hint">Open details</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="bottombar">
+    <span>ABOUT / PERSONAL</span>
+    <span>SCEYA © 2026</span>
+    <a href="#">LINKS</a>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="modal" id="modal">
+      <span class="m-tag" id="mTag">SECTION</span>
+      <h2 id="mTitle">Title</h2>
+      <p id="mText">Text</p>
+      <div class="close-hint">CLICK ANYWHERE TO CLOSE</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const data = {
+    history: {
+      tag: 'HISTORY / 01',
+      title: 'History',
+      text: 'sceya was born on March 21 in a small town in Russia and still lives there. She finished school with very good results and is currently studying at college to become a programmer.'
+    },
+    education: {
+      tag: 'EDUCATION / 02',
+      title: 'Education',
+      text: 'Finished grades 1–9 with a high GPA, after which it was time to enter a further educational institution. Passed the entrance exams to the largest art school in the region, but fate decided otherwise — and now a technical college lies ahead. In parallel, many intensive courses were completed in illustration, concept art, character drawing and still life.'
+    },
+    work: {
+      tag: 'WORK / 03',
+      title: 'Work',
+      text: 'Although there is so much artistic experience behind her, working in the desired field has barely been possible so far. From the age of 14, as soon as the passport was received, she immediately went to work as a promoter. From 16, when opportunities expanded — work as a courier, recruiter and assistant sales manager.'
+    },
+    future: {
+      tag: 'FUTURE / 04',
+      title: 'Future',
+      text: 'In the future there are plans to start full-time online work in the desired field: illustration, drawing, teaching and web development. She would like to move to China and lead a calm and measured life there.'
+    }
+  };
+
+  const overlay = document.getElementById('overlay');
+  const modal = document.getElementById('modal');
+  const mTag = document.getElementById('mTag');
+  const mTitle = document.getElementById('mTitle');
+  const mText = document.getElementById('mText');
+  const cards = document.querySelectorAll('.card');
+
+  cards.forEach(card => {
+    card.addEventListener('click', e => {
+      e.stopPropagation();
+      const key = card.dataset.key;
+      const item = data[key];
+      if (!item) return;
+      mTag.textContent = item.tag;
+      mTitle.textContent = item.title;
+      mText.textContent = item.text;
+      overlay.classList.add('open');
+    });
+  });
+
+  overlay.addEventListener('click', e => {
+    if (!modal.contains(e.target)) {
+      overlay.classList.remove('open');
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') overlay.classList.remove('open');
+  });
+</script>
+</body>
+</html>
